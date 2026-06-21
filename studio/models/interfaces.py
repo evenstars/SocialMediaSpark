@@ -1,6 +1,7 @@
-"""模型能力的抽象契约。
+"""Abstract contracts for model capabilities.
 
-业务/节点只依赖这些接口；具体实现（stub / OpenAI API / 自托管）可替换，互不影响。
+Business/nodes depend only on these interfaces; concrete impls (stub / OpenAI API /
+self-hosted) are swappable without affecting each other.
 """
 from __future__ import annotations
 
@@ -12,23 +13,24 @@ from studio.state import Asset, Candidate
 
 
 class Tagger(ABC):
-    """图片 → 结构化标签（角度 / 光线 / 场景 / 表情 / 画质 等）。"""
+    """Image -> structured tags (angle / lighting / scene / expression / quality...)."""
 
     @abstractmethod
     def tag(self, image_path: str) -> dict: ...
 
 
 class FaceEmbedder(ABC):
-    """图片 → 人脸向量（embedding）。身份基准与护栏校验共用同一实现。"""
+    """Image -> face vector (embedding). Shared by identity reference and gate checks."""
 
     @abstractmethod
     def embed(self, image_path: str) -> np.ndarray: ...
 
 
 class Enhancer(ABC):
-    """底图 + 身份向量 → 候选成片。
+    """Base photos + identity vector -> candidate outputs.
 
-    M3 = 确定性 stub；M5 = 托管图像 API（如 OpenAI）；v2 = 自托管（SDXL+InstantID）。
+    M3 = deterministic stub; M5 = hosted image API (e.g. OpenAI);
+    v2 = self-hosted (SDXL+InstantID).
     """
 
     @abstractmethod
@@ -42,7 +44,7 @@ class Enhancer(ABC):
 
 
 class Scorer(ABC):
-    """候选成片 → 质量分。至少返回 {'naturalness': float, 'aesthetic': float}。"""
+    """Candidate -> quality scores. Must return at least {'naturalness': float, 'aesthetic': float}."""
 
     @abstractmethod
     def score(self, candidate: Candidate) -> dict: ...

@@ -1,1 +1,1 @@
-"""存储层：接口契约 + 可替换实现（v1 本地 / v2 云端）。"""
+"""Storage layer: interface contracts + swappable impls (v1 local / v2 cloud)."""

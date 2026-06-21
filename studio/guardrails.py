@@ -1,10 +1,11 @@
-"""护栏：把"正当"写进代码（阈值校验、内容凭证、被禁能力的显式拒绝）。
+"""Guardrails: encode "legitimate" in code (threshold checks, content
+credentials, explicit refusal of banned capabilities).
 
-TODO(M2)：
-- identity_similarity / evaluate(candidate, identity) -> (放行?, 原因)
+TODO(M3):
+- identity_similarity / evaluate(candidate, identity) -> (pass?, reason)
 - combined_score(candidate)
-- attach_content_credentials(candidate)  # 仅写入、永不移除
-- assert_capability_allowed(name)        # 对去标识/多账号/批量发布显式报错
+- attach_content_credentials(candidate)  # write only, never remove
+- assert_capability_allowed(name)        # raise for watermark removal / multi-account / bulk publish
 
-阈值与开关来自 config.py。
+Thresholds and switches come from config.py.
 """

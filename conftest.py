@@ -1,4 +1,4 @@
-"""让测试能直接 `import config` / `import studio`（把仓库根加入 sys.path）。"""
+"""Let tests `import config` / `import studio` (add repo root to sys.path)."""
 import pathlib
 import sys
 

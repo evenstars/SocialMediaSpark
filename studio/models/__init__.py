@@ -1,1 +1,1 @@
-"""模型能力层：接口契约 + 可替换实现（stub / API / 自托管）。"""
+"""Model capability layer: interface contracts + swappable impls (stub / API / self-hosted)."""

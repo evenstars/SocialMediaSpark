@@ -1,5 +1,5 @@
-"""离线可跑的确定性 stub 实现（实现 models/interfaces.py 的四个接口）。
+"""Deterministic, offline stub impls (implement the four model interfaces).
 
-用于 M3/M4 与测试：不依赖网络/GPU，可在任意环境跑通流水线与护栏。
-TODO(M3)：StubTagger / StubFaceEmbedder / StubEnhancer / StubScorer。
+For M3/M4 and tests: no network/GPU, runs the pipeline and guardrails anywhere.
+TODO(M3): StubTagger / StubFaceEmbedder / StubEnhancer / StubScorer.
 """

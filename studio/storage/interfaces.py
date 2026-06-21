@@ -1,7 +1,7 @@
-"""存储抽象契约。
+"""Storage abstract contracts.
 
-业务层只依赖这些接口。v1：SQLite + numpy + 本地文件；v2/云：Postgres(+pgvector) + 对象存储。
-更换实现时业务层零改动。
+Business code depends only on these interfaces. v1: SQLite + numpy + local files;
+v2/cloud: Postgres(+pgvector) + object storage. Swapping impls needs no business changes.
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from studio.state import Asset, Candidate
 
 
 class MetadataStore(ABC):
-    """关系/元数据：assets、candidates、collections。"""
+    """Relational/metadata: assets, candidates, collections."""
 
     @abstractmethod
     def init_schema(self) -> None: ...
@@ -32,14 +32,14 @@ class MetadataStore(ABC):
 
 
 class VectorStore(ABC):
-    """embedding 的存取与相似度检索。"""
+    """Store and similarity-search embeddings."""
 
     @abstractmethod
     def add(self, id: str, vec: np.ndarray) -> None: ...
 
     @abstractmethod
     def search(self, vec: np.ndarray, k: int = 5) -> list[tuple[str, float]]:
-        """返回 [(id, 相似度)]，按相似度降序。"""
+        """Return [(id, similarity)] sorted by similarity desc."""
 
     @abstractmethod
     def save(self) -> None: ...
@@ -49,11 +49,11 @@ class VectorStore(ABC):
 
 
 class FileStore(ABC):
-    """原图 / 成片的存取。"""
+    """Store and fetch source photos / outputs."""
 
     @abstractmethod
     def put(self, data: bytes, name: str) -> str:
-        """写入并返回可访问路径/URL。"""
+        """Write and return an accessible path/URL."""
 
     @abstractmethod
     def path(self, name: str) -> str: ...

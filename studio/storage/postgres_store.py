@@ -1,4 +1,5 @@
-"""Postgres(+pgvector) 实现 MetadataStore 与 VectorStore（v2/云端，占位）。
+"""Postgres(+pgvector) impl of MetadataStore and VectorStore (v2/cloud, placeholder).
 
-TODO(v2)：用 psycopg + pgvector 同时实现关系存储与向量检索，业务层零改动。
+TODO(v2): use psycopg + pgvector for both relational storage and vector search,
+with zero business-layer changes.
 """

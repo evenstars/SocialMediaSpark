@@ -1,7 +1,8 @@
-"""数据契约：在 LangGraph 节点间流动的状态与核心数据对象。
+"""Data contracts: the state flowing between LangGraph nodes, plus core objects.
 
-Asset = 用户的真实底图；Candidate = 增强 / 生成出来的候选成片。
-JobState 是流水线状态（LangGraph 用 TypedDict，节点返回部分更新并合并）。
+Asset = a user's real source photo; Candidate = an enhanced/generated output.
+JobState is the pipeline state (a TypedDict; nodes return partial updates that
+are merged in).
 """
 from __future__ import annotations
 
@@ -13,35 +14,35 @@ import numpy as np
 
 @dataclass
 class Asset:
-    """一张真实底图及其元数据。"""
+    """A real source photo and its metadata."""
     id: str
     path: str
     tags: dict[str, Any] = field(default_factory=dict)
-    identity_vec: Optional[np.ndarray] = None     # 该图的人脸向量
+    identity_vec: Optional[np.ndarray] = None     # face vector of this photo
 
 
 @dataclass
 class Candidate:
-    """一张候选成片（来自增强或一致性生成）。"""
+    """A candidate output (from enhancement or consistent generation)."""
     id: str
     path: str
     source_asset_id: str
-    latent: np.ndarray                            # 身份隐向量（真实实现里来自像素）
+    latent: np.ndarray                            # identity latent (from pixels in real impl)
     scores: dict[str, float] = field(default_factory=dict)
-    credentials: Optional[dict[str, Any]] = None  # C2PA 内容凭证（过闸后写入）
+    credentials: Optional[dict[str, Any]] = None  # C2PA content credentials (set after gate)
     status: str = "candidate"                     # candidate / rejected / approved
-    needs_human: bool = True                      # v1：自动过闸后仍标记待人工确认
+    needs_human: bool = True                      # v1: still flag for human confirm after gate
     reject_reason: Optional[str] = None
 
 
 class JobState(TypedDict, total=False):
-    request: str                  # 用户需求，如"深色背景的职业头像"
-    person_id: str                # 身份标识（决定身份向量）
-    base_paths: list[str]         # 真实底图路径
+    request: str                  # user request, e.g. "professional headshot, dark background"
+    person_id: str                # identity key (determines the identity vector)
+    base_paths: list[str]         # real source photo paths
     assets: list[Asset]
-    identity: np.ndarray          # 聚合后的身份基准向量
+    identity: np.ndarray          # aggregated identity reference vector
     candidates: list[Candidate]
     approved: list[Candidate]
-    collection: str               # 入库到哪个用途集合
+    collection: str               # which usage collection to file into
     exported: list[str]
     log: list[str]

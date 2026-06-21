@@ -1,4 +1,5 @@
-"""Gradio 复核界面。
+"""Gradio review UI.
 
-TODO(M6)：浏览候选、挑选、归类到用途集合，导出带内容凭证的成片。
+TODO(M6): browse candidates, select, file into usage collections, export outputs
+with content credentials.
 """

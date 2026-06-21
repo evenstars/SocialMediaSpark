@@ -1,4 +1,13 @@
-"""节点 4：人工复核 —— v1 自动过闸 + 标记待人工确认（M6 接 Gradio 界面）。
+"""Node 4: human review — v1 auto-pass + flag for human (M6 wires Gradio).
 
-TODO(M3)：实现 review(state) -> dict。
+M2: pass-through placeholder.
+TODO(M3): move gated candidates into approved, set needs_human flag.
 """
+from __future__ import annotations
+
+from studio.state import JobState
+
+
+def review(state: JobState) -> dict:
+    log = state.get("log", []) + ["review: (M3) auto-pass + flag for human confirm"]
+    return {"approved": state.get("approved", []), "log": log}

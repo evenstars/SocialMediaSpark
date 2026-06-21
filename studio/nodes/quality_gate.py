@@ -1,4 +1,13 @@
-"""节点 3：真实性&质量闸门 —— 身份相似度/自然度/美学打分，过线者写入内容凭证。
+"""Node 3: authenticity & quality gate — score + filter + write content credentials.
 
-TODO(M3)：实现 quality_gate(state) -> dict（调 guardrails 评估 + attach_content_credentials）。
+M2: pass-through placeholder.
+TODO(M3): score via Scorer, filter via guardrails.evaluate, attach_content_credentials to passers.
 """
+from __future__ import annotations
+
+from studio.state import JobState
+
+
+def quality_gate(state: JobState) -> dict:
+    log = state.get("log", []) + ["quality_gate: (M3) identity/naturalness/aesthetic gate + credentials"]
+    return {"candidates": state.get("candidates", []), "log": log}

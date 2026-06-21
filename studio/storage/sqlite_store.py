@@ -1,4 +1,4 @@
-"""MetadataStore 的 SQLite 实现（v1）。
+"""SQLite implementation of MetadataStore (v1).
 
-TODO(M3)：建表 assets/candidates/collections，实现接口方法。
+TODO(M3): create tables assets/candidates/collections, implement interface methods.
 """

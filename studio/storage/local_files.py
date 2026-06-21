@@ -1,4 +1,4 @@
-"""FileStore 的本地文件实现（v1）。
+"""Local filesystem implementation of FileStore (v1).
 
-TODO(M3)：put / path（写入 config.FILES_DIR）。
+TODO(M3): put / path (write under config.FILES_DIR).
 """

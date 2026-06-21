@@ -1,4 +1,4 @@
-"""VectorStore 的 numpy 实现（v1）：向量存成 .npz，内存里算余弦相似度。
+"""numpy implementation of VectorStore (v1): vectors stored as .npz, cosine in memory.
 
-TODO(M3)：add / search / save / load。
+TODO(M3): add / search / save / load.
 """

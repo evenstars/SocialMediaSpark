@@ -1,1 +1,1 @@
-"""LangGraph 流水线节点：ingest → generate → quality_gate → review → curate。"""
+"""Pipeline nodes: ingest -> generate -> quality_gate -> review -> curate."""

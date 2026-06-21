@@ -5,13 +5,13 @@ __pycache__/
 venv/
 *.egg-info/
 
-# 本地数据（人脸/向量/成片不入库）
+# Local data (face/vectors/outputs are not committed)
 data/
 
-# 密钥与环境
+# Secrets and env
 .env
 *.key
 
-# 测试/工具缓存
+# Test / tool caches
 .pytest_cache/
 .DS_Store

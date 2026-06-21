@@ -1,4 +1,4 @@
-"""M1 验收：包可导入 + 护栏常量与接口契约就位。"""
+"""M1 acceptance: package imports + guardrail constants and interface contracts present."""
 import config
 
 

@@ -1,4 +1,13 @@
-"""节点 2：生成/增强 —— 检索底图 + 调 Enhancer 产出候选。
+"""Node 2: generate/enhance — retrieve base photos + call Enhancer for candidates.
 
-TODO(M3)：实现 generate(state) -> dict（检索 + Enhancer.generate）。
+M2: pass-through placeholder.
+TODO(M3): retrieve base photos by request, call Enhancer.generate to produce candidates.
 """
+from __future__ import annotations
+
+from studio.state import JobState
+
+
+def generate(state: JobState) -> dict:
+    log = state.get("log", []) + ["generate: (M3) retrieve base photos + generate candidates"]
+    return {"candidates": state.get("candidates", []), "log": log}
