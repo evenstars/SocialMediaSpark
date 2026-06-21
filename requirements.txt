@@ -1,0 +1,19 @@
+# ---- 核心 ----
+langgraph>=0.2          # 编排（沙盒/受限环境装不上时，graph.py 自带 fallback 执行器）
+numpy>=1.26
+pillow>=10.0
+
+# ---- 测试 ----
+pytest>=8.0
+
+# ---- M5 真实模型（API 优先，按需安装）----
+# openai>=1.0           # 托管图像 API
+# insightface           # 本地人脸向量（护栏用），或改用云端人脸比对
+
+# ---- M6 复核界面 ----
+# gradio>=4.0
+
+# ---- v2 / 云端（按需）----
+# psycopg[binary]>=3.1  # PostgreSQL
+# pgvector              # 向量检索
+# boto3                 # 对象存储
