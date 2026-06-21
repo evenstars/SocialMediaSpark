@@ -1,21 +1,22 @@
-"""Orchestration skeleton: wire the five nodes into one pipeline,
-plus a dependency-free fallback executor.
+"""Orchestration: wire the five nodes into one pipeline, inject dependencies,
+and provide a dependency-free fallback executor.
 
 Pipeline (fixed order):
     ingest -> generate -> quality_gate -> review -> curate
 
 Design notes:
-- Every node has the same shape: `fn(state) -> dict` (returns a partial state
-  update that the executor merges into state).
-- Prefer LangGraph for wiring; if langgraph is not installed, use the local
-  sequential executor. Both expose `.invoke(state) -> state`, so callers/tests
-  don't care which one is used.
+- Each node has the shape `fn(state, deps) -> dict` (a partial state update).
+- build_graph() binds a Deps object into every node, producing `state -> update`
+  callables, then wires them with LangGraph (if installed) or the local
+  sequential executor. Both expose `.invoke(state) -> state`.
 - List fields (e.g. log) return the *full new list*, so behaviour is identical
-  under LangGraph's default overwrite merge and the fallback's dict.update.
-  No custom reducer needed.
+  under LangGraph's overwrite merge and the fallback's dict.update.
 """
 from __future__ import annotations
 
+from typing import Optional
+
+from studio.deps import Deps, default_deps
 from studio.nodes.curate import curate
 from studio.nodes.generate import generate
 from studio.nodes.ingest import ingest
@@ -23,7 +24,7 @@ from studio.nodes.quality_gate import quality_gate
 from studio.nodes.review import review
 from studio.state import JobState
 
-# Fixed order of pipeline nodes (name -> function)
+# Fixed order of pipeline nodes (name -> function taking (state, deps))
 PIPELINE = [
     ("ingest", ingest),
     ("generate", generate),
@@ -41,15 +42,19 @@ def langgraph_available() -> bool:
         return False
 
 
-class _SequentialApp:
-    """Fallback executor: run PIPELINE in order, merge updates via dict.update.
+def build_pipeline(deps: Deps):
+    """Bind deps into each node, yielding (name, state->update) callables."""
+    return [(name, lambda state, fn=fn: fn(state, deps)) for name, fn in PIPELINE]
 
-    Intentionally implements only what a linear chain needs; the interface
-    mirrors a compiled LangGraph app's `.invoke`.
+
+class _SequentialApp:
+    """Fallback executor: run the bound pipeline in order, merge via dict.update.
+
+    Interface mirrors a compiled LangGraph app's `.invoke`.
     """
 
-    def __init__(self, pipeline):
-        self._pipeline = pipeline
+    def __init__(self, bound_pipeline):
+        self._pipeline = bound_pipeline
 
     def invoke(self, state: dict) -> dict:
         state = dict(state)               # do not mutate the caller's object
@@ -59,26 +64,30 @@ class _SequentialApp:
         return state
 
 
-def build_graph():
-    """Build and return a runnable pipeline app (exposes `.invoke(state)`).
+def build_graph(deps: Optional[Deps] = None):
+    """Build a runnable pipeline app (exposes `.invoke(state)`).
 
-    With langgraph -> compiled StateGraph; otherwise -> _SequentialApp.
+    deps defaults to stub models + local stores. With langgraph -> compiled
+    StateGraph; otherwise -> _SequentialApp.
     """
+    deps = deps or default_deps()
+    bound = build_pipeline(deps)
+
     if langgraph_available():
         print("[graph] LangGraph available — building StateGraph")
         from langgraph.graph import END, START, StateGraph
 
         g = StateGraph(JobState)
-        for name, fn in PIPELINE:
+        for name, fn in bound:
             g.add_node(name, fn)
-        g.add_edge(START, PIPELINE[0][0])                 # entry
-        for (a, _), (b, _) in zip(PIPELINE, PIPELINE[1:]):
+        g.add_edge(START, bound[0][0])                    # entry
+        for (a, _), (b, _) in zip(bound, bound[1:]):
             g.add_edge(a, b)                              # sequential edges
-        g.add_edge(PIPELINE[-1][0], END)                  # exit
+        g.add_edge(bound[-1][0], END)                     # exit
         return g.compile()
 
     print("[graph] LangGraph not available — falling back to SequentialApp")
-    return _SequentialApp(PIPELINE)
+    return _SequentialApp(bound)
 
 
 def new_job(request: str, person_id: str, base_paths: list[str] | None = None) -> JobState:

@@ -1,13 +1,20 @@
-"""Node 4: human review — v1 auto-pass + flag for human (M6 wires Gradio).
+"""Node 4: human review.
 
-M2: pass-through placeholder.
-TODO(M3): move gated candidates into approved, set needs_human flag.
+v1: auto-approve candidates that passed the gate, but keep needs_human=True so a
+real reviewer (M6 Gradio UI) still has the final say.
 """
 from __future__ import annotations
 
+from studio.deps import Deps
 from studio.state import JobState
 
 
-def review(state: JobState) -> dict:
-    log = state.get("log", []) + ["review: (M3) auto-pass + flag for human confirm"]
-    return {"approved": state.get("approved", []), "log": log}
+def review(state: JobState, deps: Deps) -> dict:
+    approved = []
+    for c in state.get("candidates", []):
+        c.status = "approved"
+        c.needs_human = True
+        deps.meta_store.save_candidate(c)
+        approved.append(c)
+    log = state.get("log", []) + [f"review: {len(approved)} auto-approved (await human)"]
+    return {"approved": approved, "log": log}

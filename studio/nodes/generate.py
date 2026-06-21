@@ -1,13 +1,26 @@
-"""Node 2: generate/enhance — retrieve base photos + call Enhancer for candidates.
+"""Node 2: generate/enhance — produce candidates from base photos + identity.
 
-M2: pass-through placeholder.
-TODO(M3): retrieve base photos by request, call Enhancer.generate to produce candidates.
+v1 stub uses all assets as references; a real impl would retrieve the best ones
+via the vector store before generating.
 """
 from __future__ import annotations
 
+from studio.deps import Deps
 from studio.state import JobState
 
+N_CANDIDATES = 4
 
-def generate(state: JobState) -> dict:
-    log = state.get("log", []) + ["generate: (M3) retrieve base photos + generate candidates"]
-    return {"candidates": state.get("candidates", []), "log": log}
+
+def generate(state: JobState, deps: Deps) -> dict:
+    identity = state["identity"]
+    refs = state.get("assets", [])
+    candidates = deps.enhancer.generate(
+        identity=identity,
+        refs=refs,
+        n=N_CANDIDATES,
+        request=state.get("request", ""),
+    )
+    for c in candidates:
+        deps.meta_store.save_candidate(c)
+    log = state.get("log", []) + [f"generate: {len(candidates)} candidate(s)"]
+    return {"candidates": candidates, "log": log}
