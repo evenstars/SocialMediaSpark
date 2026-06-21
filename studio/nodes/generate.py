@@ -14,10 +14,11 @@ N_CANDIDATES = 4
 def generate(state: JobState, deps: Deps) -> dict:
     identity = state["identity"]
     refs = state.get("assets", [])
+    n = state.get("n_candidates", N_CANDIDATES)
     candidates = deps.enhancer.generate(
         identity=identity,
         refs=refs,
-        n=N_CANDIDATES,
+        n=n,
         request=state.get("request", ""),
     )
     for c in candidates:

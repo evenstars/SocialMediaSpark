@@ -11,7 +11,14 @@
 - **M1 脚手架** ✅：目录结构、依赖、配置、接口契约、占位模块、导入测试。
 - **M2 编排骨架** ✅：LangGraph 装配 + fallback 执行器，五节点按序可跑。
 - **M3 模块与 stub** ✅：护栏、四个模型 stub、三个存储实现、五节点真实逻辑、依赖注入；流水线端到端可产出并强制护栏。
-- 后续：M4 端到端 CLI demo + 护栏集成测试 → M5 真实模型(API) → M6 复核界面。
+- **M4 端到端 demo** ✅：`cli.py` 一条命令跑通，输出可读成片清单（含拒绝原因与 C2PA 凭证），支持喂真实照片。
+- 后续：M5 真实模型(API) → M6 复核界面。
+
+## 跑 demo
+```bash
+python cli.py --demo                 # 合成示例底图并跑完整条流水线
+python cli.py --base a.jpg b.jpg --request "professional headshot, dark background"
+```
 
 ## 目录
 ```

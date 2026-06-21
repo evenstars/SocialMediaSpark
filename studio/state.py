@@ -39,9 +39,11 @@ class JobState(TypedDict, total=False):
     request: str                  # user request, e.g. "professional headshot, dark background"
     person_id: str                # identity key (determines the identity vector)
     base_paths: list[str]         # real source photo paths
+    n_candidates: int             # how many candidates to generate (optional)
     assets: list[Asset]
     identity: np.ndarray          # aggregated identity reference vector
-    candidates: list[Candidate]
+    candidates: list[Candidate]   # after the gate: only the passers
+    rejected: list[Candidate]     # candidates the gate rejected (with reasons)
     approved: list[Candidate]
     collection: str               # which usage collection to file into
     exported: list[str]

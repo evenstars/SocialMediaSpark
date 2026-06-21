@@ -33,4 +33,4 @@ def quality_gate(state: JobState, deps: Deps) -> dict:
     log = state.get("log", []) + [
         f"quality_gate: {len(passed)} passed, {len(rejected)} rejected"
     ]
-    return {"candidates": passed, "log": log}
+    return {"candidates": passed, "rejected": rejected, "log": log}
